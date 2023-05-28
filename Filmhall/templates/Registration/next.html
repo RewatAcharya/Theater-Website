@@ -1,0 +1,67 @@
+{% extends 'Registration/base.html' %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary ">
+    <div class="container-fluid bg-danger text-white">
+      <a class="navbar-brand" href="{% url 'home' %}">Theater Website</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'releasing' %}">Now Playing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'next' %}">Next Change</a>
+          </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'adminpage' %}">Add Movie</a>
+          </li>
+          {% endif %}
+        </ul>
+        {% if request.user.is_authenticated %}
+        <span>
+          Hello {{ user.username }}
+          <a href="{% url 'logout' %}"
+            class="btn btn-primary text-black">logout</a>
+            {% else %}
+          <a href="{% url 'loginUser' %}" class="btn btn-primary text-black">login</a> 
+          {% endif %}
+          
+        </span>
+      </div>
+    </div>
+  </nav>
+
+
+<div class="container mt-3">
+    <h1 class="center">Next In Our Hall</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for movi in movie %}
+      <div class="col">
+        <div class="card h-100">
+          <img src="/{{ movi.poster }}" height="500px" width="100%" class="card-img-top"
+            alt="Los Angeles Skyscrapers" />
+          <div class="card-body">
+           <a href="{% url 'movie' id=movi.id %}"><h5 class="card-title">{{ movi.name }}</h5></a> 
+            <p class="card-text">{{ movi.details }}</p>
+          </div>
+          
+    {% if request.user.is_superuser %}
+      <a href="{% url 'updateMovie' id=movi.id %}" class="btn btn-warning mb-2">Update Movie Details</a>
+      <a href="{% url 'deleteMovie' id=movi.id %}" class="btn btn-danger">Delete Movie</a>
+    {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <h2>{{ra}}</h2>
+
+{% endblock %}

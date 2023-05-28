@@ -1,0 +1,149 @@
+{% extends "Registration/base.html" %}
+
+{% block content %}
+
+  {% load static %}
+  
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid bg-danger text-white">
+      <a class="navbar-brand" href="{% url 'home' %}">Theater Website</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'releasing' %}">Now Playing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'next' %}">Next Change</a>
+          </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'adminpage' %}">Add Movie</a>
+          </li>
+          {% endif %}
+        </ul>
+        {% if request.user.is_authenticated %}
+        <span>
+          Hello {{ user.username }}
+          <a href="{% url 'logout' %}"
+            class="btn btn-primary text-black">logout</a>
+            {% else %}
+          <a href="{% url 'loginUser' %}" class="btn btn-primary text-black">login</a> 
+          {% endif %}
+          
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div id="carouselExampleIndicators" class="carousel slide">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+          aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+          aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+          aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{% static 'crousel1.jpg' %}" height="450px" width="100%" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'crousel2.jpg' %}" height="450px" width="100%" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'crousel3.jpg' %}" height="450px" width="100%" class="d-block w-100" alt="..." />
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container mt-1">
+    <div class="row">
+      <div class="col">
+        <img src="{% static 'puneeth-shetty-bEiD43gc_lI-unsplash.jpg' %}" style="border-radius:30px;" height="200" width="100%" class="d-block w-100 mt-5" alt="..." />
+      </div>
+      <div class="col-6">
+        <img src="{% static 'juliana-kozoski-IoQioGLrz3Y-unsplash.jpg' %}" style="border-radius:30px;" height="300" width="100%" class="d-block w-100" alt="..." />
+      </div>
+      <div class="col">
+        <img src="{% static 'vitaly-taranov-OCrPJce6GPk-unsplash.jpg' %}" style="border-radius:30px;" height="200" width="100%" class="d-block w-100 mt-5" alt="..." />
+      </div>
+    </div>
+
+  <div class="container mt-3">
+    <h4 class="display-4 text-center"><mark>Now Playing</mark></h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for movi in movie %}
+      <div class="col">
+        <div class="card h-100">
+          <a href="{% url 'movie' id=movi.id %}">
+          <img src="{{ movi.poster }}" height="500px" width="100%" class="card-img-top"
+            alt="{{movi.name}}" /></a>
+          <div class="card-body">
+           <a href="{% url 'movie' id=movi.id %}" class="card-title text-danger text-decoration-none"><h5 class="card-title">{{ movi.name }}</h5></a> 
+            <p class="card-text">Description: {{ movi.details }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <div class="container mt-3">
+    <h4 class="display-4 text-center"><mark>Offers and Services</mark></h4>
+    <div class="row">
+      <div class="col">
+        <img src="{% static 'tamanna-rumee-Wt33T42JNCM-unsplash.jpg' %}" height="578px" width="528px" class="d-block w-100" alt="..." />
+      </div>
+      <div class="col">
+        <img src="{% static 'pylz-works-ViI6qkoRfNA-unsplash.jpg' %}" height="578px" width="528px" class="d-block w-100" alt="..." />
+      </div>
+      <div class="col">
+        <img src="{% static 'no-revisions-cpIgNaazQ6w-unsplash.jpg' %}" height="578px" width="528px" class="d-block w-100" alt="..." />
+      </div>
+    </div>
+
+
+    <h4 class="display-4 text-center mt-3"><mark>Contact Us</mark></h4>
+    <div class="container d-flex justify-content-center mt-3">
+          <form>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Name</label>
+              <input type="text" class="form-control" id="name" placeholder="name">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="@gmail.com">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Message</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <input type="submit" value="Send" class="btn btn-primary"></input>
+          </div>
+          </form>
+        </div>
+  
+  
+
+
+{% endblock content %}

@@ -1,0 +1,132 @@
+{% extends "Registration/base.html" %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid bg-danger text-white">
+      <a class="navbar-brand" href="{% url 'home' %}">Theater Website</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'releasing' %}">Now Playing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'next' %}">Next Change</a>
+          </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'adminpage' %}">Add Movie</a>
+          </li>
+          <li>
+          <a href="{% url 'updateMovie' id=movie.id %}" class="nav-link">Update Movie</a>
+          </li><li>
+            <a href="{% url 'deleteMovie' id=movie.id %}" class="nav-link">Delete Movie</a>
+          </li>
+          {% endif %}
+        </ul>
+        {% if request.user.is_authenticated %}
+        <span>
+          Hello {{ user.username }}
+          <a href="{% url 'logout' %}"
+            class="btn btn-primary text-black">logout</a>
+            {% else %}
+          <a href="{% url 'loginUser' %}" class="btn btn-primary text-black">login</a> 
+          {% endif %}
+          
+        </span>
+      </div>
+    </div>
+  </nav>
+
+
+  <div class="container">
+    <div class="container mt-3">
+        <div class="row">
+         
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                  <div class="card h-100">
+                    <img src="/{{ movie.poster }}" height="500px" width="100%" class="card-img-top"
+                      alt="{{movie.name}}" />
+                  </div>
+          
+              </div>
+          </div>
+          <div class="col">
+            Name:{{ movie.name }}<br><br>
+            Details:{{ movie.details }}<br><br>
+            Stars:{{ movie.stars }}<br><br>
+            Runtime:{{ movie.run_time }}<br><br>
+            Rating:{{ movie.IMDB_rating }}<br><br>
+            Release:{{movie.release}}<br><br>
+          </div>
+        </div>
+
+<br><br>
+{% if movie.status == "Releasing" %}
+    {% for s in show %}
+    <button class="btn btn-warning" type="submit"><a href="{% url 'book' path=s.id %}">{{s.start_time}}</a></button>
+    <br><br>
+    {% endfor %}
+{% comment %} Review Section {% endcomment %}
+
+        {% if request.user.is_authenticated %}
+        <form action="{% url 'review' id=movie.id %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Hello {{ user.username }}, Review Movie</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="review"></textarea>
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+        {% endif %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Update/Delete
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Update/Delete</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% for r in reviewFiltered %}
+            <div class="User Review">
+                <h5>Comment: {{r.review}}</h5>
+            </div>
+            <form action="{% url 'reviewUpdate' id=movie.id path=r.id %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                        name="reviewUpdate">{{r.review}}</textarea>
+                </div>
+                <input type="submit" class="btn btn-warning" value="Update">
+                <a href="{% url 'deleteReview' id=movie.id path=r.id %}" class="btn btn-danger">delete</a>
+            </form>
+            {%endfor%}
+        </div>
+      </div>
+    </div>
+  </div>
+      
+        {% for r in review %}
+        <div class="User Review">
+            <h5>Comment: {{r.review}}</h5>
+            <h6>Reviewed by: {{r.user_id}} </h6>
+        </div>
+        {%endfor%}
+        {% endif %}
+
+
+{% endblock content %}
